@@ -1,30 +1,61 @@
-# Duke User Guide
+# Wag User Guide
 
-// Update the title above to match the actual product name
+Wag is a command-line chatbot designed to help you manage your tasks quickly and efficiently. Whether you need to add todos, deadlines, or events, Wag provides a simple and intuitive interface to keep track of your tasks. With built-in error handling, Wag guides you to correct any mistakes, ensuring a smooth experience.
 
-// Product screenshot goes here
+## Adding Deadlines
+To add a deadline task, use the deadline command followed by the task description and the deadline time prefixed with /by.
 
-// Product intro goes here
+Example:
+````
+deadline return book /by Sunday
+````
 
-## Adding deadlines
+Expected output:
 
-// Describe the action and its outcome.
+````
+Got it. I've added this task:
+[D][ ] return book (by: Sunday)
+````
 
-// Give examples of usage
+This command creates a new deadline task and confirms that it has been added to your task list.
 
-Example: `keyword (optional arguments)`
+## Marking and Unmarking Tasks
+Wag allows you to mark tasks as completed or revert them back to incomplete. Use the mark command to mark a task as done and the unmark command to undo it.
 
-// A description of the expected outcome goes here
+Example for marking a task:
+````
+mark 1
+````
 
-```
-expected output
-```
+Expected output:
+````
+Nice! I've marked this task as done:
+[T][X] read book
+````
 
-## Feature ABC
+Example for unmarking a task:
+````
+unmark 1
+````
+Expected output:
+````
+OK, I've marked this task as not done yet:
+[T][ ] read book
+````
+This feature helps you keep track of your progress by visually indicating which tasks are complete.
 
-// Feature details
+## Error Handling
+Wag includes robust error handling to ensure that incorrect inputs are managed gracefully. Instead of crashing or behaving unpredictably, Wag provides clear feedback to help you correct your command.
 
+Example: Entering an incomplete todo command:
+````
+todo
+````
 
-## Feature XYZ
-
-// Feature details
+Expected output:
+````
+____________________________________________________________
+OOPS!!! The description for a todo cannot be empty.
+____________________________________________________________
+````
+By guiding you with specific error messages, Wag makes it easy to adjust your input and continue managing your tasks without interruption.

@@ -1,81 +1,5 @@
 import java.util.Scanner;
 
-// Abstract class to represent a generic task
-abstract class Task {
-    protected String description;
-    protected boolean isDone;
-
-    public Task(String description) {
-        this.description = description;
-        this.isDone = false;
-    }
-
-    public void markAsDone() {
-        isDone = true;
-    }
-
-    public void unmarkAsDone() {
-        isDone = false;
-    }
-
-    public String getStatusIcon() {
-        return (isDone ? "[X]" : "[ ]");
-    }
-
-    // Override toString to return the task status and description
-    @Override
-    public String toString() {
-        return getStatusIcon() + " " + description;
-    }
-}
-
-// Class for Todo tasks
-class Todo extends Task {
-    public Todo(String description) {
-        super(description);
-    }
-
-    // Override toString to represent Todo tasks with a [T] icon
-    @Override
-    public String toString() {
-        return "[T]" + super.toString();
-    }
-}
-
-// Class for Deadline tasks
-class Deadline extends Task {
-    protected String by;
-
-    public Deadline(String description, String by) {
-        super(description);
-        this.by = by;
-    }
-
-    // Override toString to represent Deadline tasks with a [D] icon and deadline date
-    @Override
-    public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
-    }
-}
-
-// Class for Event tasks
-class Event extends Task {
-    protected String from;
-    protected String to;
-
-    public Event(String description, String from, String to) {
-        super(description);
-        this.from = from;
-        this.to = to;
-    }
-
-    // Override toString to represent Event tasks with a [E] icon and time range
-    @Override
-    public String toString() {
-        return "[E]" + super.toString() + " (from: " + from + " to: " + to + ")";
-    }
-}
-
 // Main class for the Wag Program
 public class Wag {
     public static void main(String[] args) {
@@ -98,70 +22,93 @@ public class Wag {
         String command;
 
         while (true) {
-            command = scanner.nextLine();
-            System.out.println("_______________________________________");
-
-            if (command.equalsIgnoreCase("bye")) {
-                System.out.println("Bye. Hope to see you again soon!");
+            try {
+                command = scanner.nextLine();
                 System.out.println("_______________________________________");
-                break;
-            } else if (command.equalsIgnoreCase("list")) {
-                if (taskCount == 0) {
-                    System.out.println("No tasks added yet.");
+
+                if (command.equalsIgnoreCase("bye")) {
+                    System.out.println("Bye. Hope to see you again soon!");
+                    System.out.println("_______________________________________");
+                    break;
+                } else if (command.equalsIgnoreCase("list")) {
+                    if (taskCount == 0) {
+                        System.out.println("No tasks added yet.");
+                    } else {
+                        System.out.println("Here are the tasks in your list:");
+                        for (int i = 0; i < taskCount; i++) {
+                            System.out.println((i + 1) + ". " + tasks[i]);
+                        }
+                    }
+                } else if (command.startsWith("mark")) {
+                    String[] parts = command.split(" ");
+                    if (parts.length < 2) {
+                        throw new WagException("Please provide a valid task number to mark as done.");
+                    }
+                    int taskId = Integer.parseInt(parts[1]) - 1;
+                    if (taskId < 0 || taskId >= taskCount) {
+                        throw new WagException("Task number is out of range.");
+                    }
+                    tasks[taskId].markAsDone();
+                    System.out.println("Nice! I've marked this task as done:");
+                    System.out.println("  " + tasks[taskId]);
+                } else if (command.startsWith("unmark")) {
+                    String[] parts = command.split(" ");
+                    if (parts.length < 2) {
+                        throw new WagException("Please provide a valid task number to unmark.");
+                    }
+                    int taskId = Integer.parseInt(parts[1]) - 1;
+                    if (taskId < 0 || taskId >= taskCount) {
+                        throw new WagException("Task number is out of range.");
+                    }
+                    tasks[taskId].unmarkAsDone();
+                    System.out.println("OK, I've marked this task as not done yet:");
+                    System.out.println("  " + tasks[taskId]);
+                } else if (command.startsWith("todo")) {
+                    String taskDescription = command.substring(5).trim();
+                    if (taskDescription.isEmpty()) {
+                        throw new WagException("The description for a todo cannot be empty.");
+                    }
+                    tasks[taskCount] = new Todo(taskDescription);
+                    taskCount++;
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + tasks[taskCount - 1]);
+                } else if (command.startsWith("deadline")) {
+                    String details = command.substring(9).trim();
+                    if (details.isEmpty() || !details.contains(" /by ")) {
+                        throw new WagException("Deadline command must be in the format: deadline <description> /by <date>.");
+                    }
+                    String[] parts = details.split(" /by ", 2);
+                    if (parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
+                        throw new WagException("The deadline description or date cannot be empty.");
+                    }
+                    tasks[taskCount] = new Deadline(parts[0].trim(), parts[1].trim());
+                    taskCount++;
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + tasks[taskCount - 1]);
+                } else if (command.startsWith("event")) {
+                    String details = command.substring(6).trim();
+                    if (details.isEmpty() || !details.contains(" /from ") || !details.contains(" /to ")) {
+                        throw new WagException("Event command must be in the format: event <description> /from <start> /to <end>.");
+                    }
+                    String[] parts = details.split(" /from | /to ", 3);
+                    if (parts.length < 3 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
+                        throw new WagException("The event description, start, and end times cannot be empty.");
+                    }
+                    tasks[taskCount] = new Event(parts[0].trim(), parts[1].trim(), parts[2].trim());
+                    taskCount++;
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + tasks[taskCount - 1]);
                 } else {
-                    System.out.println("Here are the tasks in your list:");
-                    for (int i = 0; i < taskCount; i++) {
-                        System.out.println((i + 1) + ". " + tasks[i]);
-                    }
+                    throw new WagException("I'm sorry, but I don't know what that means.");
                 }
-            } else if (command.startsWith("mark")) {
-                try {
-                    int taskId = Integer.parseInt(command.split(" ")[1]) - 1;
-                    if (taskId >= 0 && taskId < taskCount) {
-                        tasks[taskId].markAsDone();
-                        System.out.println("Nice! I've marked this task as done:");
-                        System.out.println("  " + tasks[taskId]);
-                    } else {
-                        System.out.println("Invalid task number.");
-                    }
-                } catch (Exception e) {
-                    System.out.println("Invalid command format. Please use 'mark <task_number>'.");
-                }
-            } else if (command.startsWith("unmark")) {
-                try {
-                    int taskId = Integer.parseInt(command.split(" ")[1]) - 1;
-                    if (taskId >= 0 && taskId < taskCount) {
-                        tasks[taskId].unmarkAsDone();
-                        System.out.println("OK, I've marked this task as not done yet:");
-                        System.out.println("  " + tasks[taskId]);
-                    } else {
-                        System.out.println("Invalid task number.");
-                    }
-                } catch (Exception e) {
-                    System.out.println("Invalid command format. Please use 'unmark <task_number>'.");
-                }
-            } else if (command.startsWith("todo")) {
-                String taskDescription = command.substring(5);
-                tasks[taskCount] = new Todo(taskDescription);
-                taskCount++;
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount - 1]);
-            } else if (command.startsWith("deadline")) {
-                String[] parts = command.substring(9).split(" /by ", 2);
-                tasks[taskCount] = new Deadline(parts[0], parts[1]);
-                taskCount++;
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount - 1]);
-            } else if (command.startsWith("event")) {
-                String[] parts = command.substring(6).split(" /from | /to ", 3);
-                tasks[taskCount] = new Event(parts[0], parts[1], parts[2]);
-                taskCount++;
-                System.out.println("Got it. I've added this task:");
-                System.out.println("  " + tasks[taskCount - 1]);
-            } else {
-                System.out.println("Invalid command.");
+                System.out.println("_______________________________________");
+            } catch (WagException e) {
+                WagErrorHandler.handleError(e);
+            } catch (NumberFormatException e) {
+                WagErrorHandler.handleError(new WagException("Task number should be a valid integer."));
+            } catch (Exception e) {
+                WagErrorHandler.handleError(new WagException("An unexpected error occurred."));
             }
-            System.out.println("_______________________________________");
         }
     }
 }
