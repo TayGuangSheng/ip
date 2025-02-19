@@ -98,6 +98,37 @@ public class Wag {
                     taskCount++;
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks[taskCount - 1]);
+                } else if (command.startsWith("delete")) {
+                    String[] parts = command.split(" ");
+                    if (parts.length < 2) {
+                        throw new WagException("Please provide a valid task number to delete.");
+                    }
+
+                    int taskId = Integer.parseInt(parts[1]) - 1;
+                    if (taskId < 0 || taskId >= taskCount) {
+                        throw new WagException("Task number is out of range.");
+                    }
+
+                    // Get the task to delete
+                    Task taskToDelete = tasks[taskId];
+
+                    // Shift the tasks to remove the task
+                    for (int i = taskId; i < taskCount - 1; i++) {
+                        tasks[i] = tasks[i + 1];
+                    }
+
+                    // Nullify the last task (since the array size is fixed)
+                    tasks[taskCount - 1] = null;
+
+                    // Decrease the task count
+                    taskCount--;
+
+                    // Output the success message
+                    System.out.println("_______________________________________");
+                    System.out.println("Noted. I've removed this task:");
+                    System.out.println("  " + taskToDelete);
+                    System.out.println("Now you have " + taskCount + " tasks in the list.");
+                    System.out.println("_______________________________________");
                 } else {
                     throw new WagException("I'm sorry, but I don't know what that means.");
                 }
