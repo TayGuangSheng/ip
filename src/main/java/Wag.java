@@ -1,40 +1,50 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+// Main class for the Wag Program
 public class Wag {
-    public Wag() {
-    }
-
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        String logo = "\n __      __                 \n/  \\    /  \\_____     ____  \n\\   \\/\\/   /\\__  \\   / ___\\ \n \\        /  / __ \\_/ /_/  >\n  \\__/\\  /  (____  /\\___  / \n       \\/        \\/_____/  \n";
+        String logo = "\n" +
+                " __      __                 \n" +
+                "/  \\    /  \\_____     ____  \n" +
+                "\\   \\/\\/   /\\__  \\   / ___\\ \n" +
+                " \\        /  / __ \\_/ /_/  >\n" +
+                "  \\__/\\  /  (____  /\\___  / \n" +
+                "       \\/        \\/_____/  \n";
         System.out.println(logo);
         System.out.println("_______________________________________");
         System.out.println("Hello! I'm Wag");
         System.out.println("What can I do for you?");
         System.out.println("_______________________________________");
 
-        // Use an ArrayList to store tasks dynamically
-        ArrayList<Task> tasks = new ArrayList<>();
+        // Load tasks from the hard disk at startup
+        Task[] tasks = Storage.load();
+        int taskCount = 0;
+        for (Task task : tasks) {
+            if (task != null) {
+                taskCount++;
+            }
+        }
 
-        while(true) {
+        String command;
+
+        while (true) {
             try {
-                String command = scanner.nextLine();
+                command = scanner.nextLine();
                 System.out.println("_______________________________________");
 
                 if (command.equalsIgnoreCase("bye")) {
                     System.out.println("Bye. Hope to see you again soon!");
                     System.out.println("_______________________________________");
-                    return;
-                }
-
-                if (command.equalsIgnoreCase("list")) {
-                    if (tasks.isEmpty()) {
+                    break;
+                } else if (command.equalsIgnoreCase("list")) {
+                    if (taskCount == 0) {
                         System.out.println("No tasks added yet.");
                     } else {
                         System.out.println("Here are the tasks in your list:");
-                        for (int i = 0; i < tasks.size(); i++) {
-                            System.out.println((i + 1) + ". " + tasks.get(i));
+                        for (int i = 0; i < taskCount; i++) {
+                            System.out.println((i + 1) + ". " + tasks[i]);
                         }
                     }
                 } else if (command.startsWith("mark")) {
@@ -42,29 +52,29 @@ public class Wag {
                     if (parts.length < 2) {
                         throw new WagException("Please provide a valid task number to mark as done.");
                     }
-
                     int taskId = Integer.parseInt(parts[1]) - 1;
-                    if (taskId < 0 || taskId >= tasks.size()) {
+                    if (taskId < 0 || taskId >= taskCount) {
                         throw new WagException("Task number is out of range.");
                     }
-
-                    tasks.get(taskId).markAsDone();
+                    tasks[taskId].markAsDone();
                     System.out.println("Nice! I've marked this task as done:");
-                    System.out.println("  " + tasks.get(taskId));
+                    System.out.println("  " + tasks[taskId]);
+                    // Save changes
+                    Storage.save(tasks, taskCount);
                 } else if (command.startsWith("unmark")) {
                     String[] parts = command.split(" ");
                     if (parts.length < 2) {
                         throw new WagException("Please provide a valid task number to unmark.");
                     }
-
                     int taskId = Integer.parseInt(parts[1]) - 1;
-                    if (taskId < 0 || taskId >= tasks.size()) {
+                    if (taskId < 0 || taskId >= taskCount) {
                         throw new WagException("Task number is out of range.");
                     }
-
-                    tasks.get(taskId).unmarkAsDone();
+                    tasks[taskId].unmarkAsDone();
                     System.out.println("OK, I've marked this task as not done yet:");
-                    System.out.println("  " + tasks.get(taskId));
+                    System.out.println("  " + tasks[taskId]);
+                    // Save changes
+                    Storage.save(tasks, taskCount);
                 } else if (command.startsWith("todo")) {
                     String taskDescription = command.substring(5).trim();
                     if (taskDescription.isEmpty()) {
@@ -73,6 +83,9 @@ public class Wag {
 
                     tasks.add(new Todo(taskDescription));
                     System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + tasks[taskCount - 1]);
+                    // Save changes
+                    Storage.save(tasks, taskCount);
                     System.out.println("  " + tasks.get(tasks.size() - 1));
                 } else if (command.startsWith("deadline")) {
                     String details = command.substring(9).trim();
@@ -88,8 +101,28 @@ public class Wag {
                     } else {
                         throw new WagException("Deadline command must be in the format: deadline <description> /by <date>.");
                     }
+                    tasks[taskCount] = new Deadline(parts[0].trim(), parts[1].trim());
+                    taskCount++;
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + tasks[taskCount - 1]);
+                    // Save changes
+                    Storage.save(tasks, taskCount);
                 } else if (command.startsWith("event")) {
                     String details = command.substring(6).trim();
+                    if (details.isEmpty() || !details.contains(" /from ") || !details.contains(" /to ")) {
+                        throw new WagException("Event command must be in the format: event <description> /from <start> /to <end>.");
+                    }
+                    String[] parts = details.split(" /from | /to ", 3);
+                    if (parts.length < 3 || parts[0].trim().isEmpty() ||
+                            parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
+                        throw new WagException("The event description, start, and end times cannot be empty.");
+                    }
+                    tasks[taskCount] = new Event(parts[0].trim(), parts[1].trim(), parts[2].trim());
+                    taskCount++;
+                    System.out.println("Got it. I've added this task:");
+                    System.out.println("  " + tasks[taskCount - 1]);
+                    // Save changes
+                    Storage.save(tasks, taskCount);
                     if (!details.isEmpty() && details.contains(" /from ") && details.contains(" /to ")) {
                         String[] parts = details.split(" /from | /to ", 3);
                         if (parts.length >= 3 && !parts[0].trim().isEmpty() && !parts[1].trim().isEmpty() && !parts[2].trim().isEmpty()) {
@@ -130,9 +163,9 @@ public class Wag {
                 System.out.println("_______________________________________");
             } catch (WagException e) {
                 WagErrorHandler.handleError(e);
-            } catch (NumberFormatException var9) {
+            } catch (NumberFormatException e) {
                 WagErrorHandler.handleError(new WagException("Task number should be a valid integer."));
-            } catch (Exception var10) {
+            } catch (Exception e) {
                 WagErrorHandler.handleError(new WagException("An unexpected error occurred."));
             }
         }
