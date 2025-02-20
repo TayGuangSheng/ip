@@ -1,2 +1,4 @@
-T | 0 | eat
 T | 0 | sleep
+D | 0 | eat | monday
+D | 0 | sleep | friday
+T | 1 | eat

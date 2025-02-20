@@ -1,7 +1,5 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
-// Main class for the Wag Program
 public class Wag {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
@@ -81,60 +79,44 @@ public class Wag {
                         throw new WagException("The description for a todo cannot be empty.");
                     }
 
-                    tasks.add(new Todo(taskDescription));
+                    tasks[taskCount] = new Todo(taskDescription); // Add new Todo task to the array
+                    taskCount++; // Increment task count
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks[taskCount - 1]);
                     // Save changes
                     Storage.save(tasks, taskCount);
-                    System.out.println("  " + tasks.get(tasks.size() - 1));
                 } else if (command.startsWith("deadline")) {
                     String details = command.substring(9).trim();
                     if (!details.isEmpty() && details.contains(" /by ")) {
                         String[] parts = details.split(" /by ", 2);
                         if (!parts[0].trim().isEmpty() && !parts[1].trim().isEmpty()) {
-                            tasks.add(new Deadline(parts[0].trim(), parts[1].trim()));
+                            tasks[taskCount] = new Deadline(parts[0].trim(), parts[1].trim()); // Add new Deadline task to the array
+                            taskCount++; // Increment task count
                             System.out.println("Got it. I've added this task:");
-                            System.out.println("  " + tasks.get(tasks.size() - 1));
+                            System.out.println("  " + tasks[taskCount - 1]);
+                            // Save changes
+                            Storage.save(tasks, taskCount);
                         } else {
                             throw new WagException("The deadline description or date cannot be empty.");
                         }
                     } else {
                         throw new WagException("Deadline command must be in the format: deadline <description> /by <date>.");
                     }
-                    tasks[taskCount] = new Deadline(parts[0].trim(), parts[1].trim());
-                    taskCount++;
-                    System.out.println("Got it. I've added this task:");
-                    System.out.println("  " + tasks[taskCount - 1]);
-                    // Save changes
-                    Storage.save(tasks, taskCount);
                 } else if (command.startsWith("event")) {
                     String details = command.substring(6).trim();
                     if (details.isEmpty() || !details.contains(" /from ") || !details.contains(" /to ")) {
                         throw new WagException("Event command must be in the format: event <description> /from <start> /to <end>.");
                     }
                     String[] parts = details.split(" /from | /to ", 3);
-                    if (parts.length < 3 || parts[0].trim().isEmpty() ||
-                            parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
+                    if (parts.length < 3 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
                         throw new WagException("The event description, start, and end times cannot be empty.");
                     }
-                    tasks[taskCount] = new Event(parts[0].trim(), parts[1].trim(), parts[2].trim());
-                    taskCount++;
+                    tasks[taskCount] = new Event(parts[0].trim(), parts[1].trim(), parts[2].trim()); // Add new Event task to the array
+                    taskCount++; // Increment task count
                     System.out.println("Got it. I've added this task:");
                     System.out.println("  " + tasks[taskCount - 1]);
                     // Save changes
                     Storage.save(tasks, taskCount);
-                    if (!details.isEmpty() && details.contains(" /from ") && details.contains(" /to ")) {
-                        String[] parts = details.split(" /from | /to ", 3);
-                        if (parts.length >= 3 && !parts[0].trim().isEmpty() && !parts[1].trim().isEmpty() && !parts[2].trim().isEmpty()) {
-                            tasks.add(new Event(parts[0].trim(), parts[1].trim(), parts[2].trim()));
-                            System.out.println("Got it. I've added this task:");
-                            System.out.println("  " + tasks.get(tasks.size() - 1));
-                        } else {
-                            throw new WagException("The event description, start, and end times cannot be empty.");
-                        }
-                    } else {
-                        throw new WagException("Event command must be in the format: event <description> /from <start> /to <end>.");
-                    }
                 } else if (command.startsWith("delete")) {
                     String[] parts = command.split(" ");
                     if (parts.length < 2) {
@@ -142,19 +124,27 @@ public class Wag {
                     }
 
                     int taskId = Integer.parseInt(parts[1]) - 1;
-                    if (taskId < 0 || taskId >= tasks.size()) {
+                    if (taskId < 0 || taskId >= taskCount) {
                         throw new WagException("Task number is out of range.");
                     }
 
                     // Get the task to delete
-                    Task taskToDelete = tasks.get(taskId);
-                    tasks.remove(taskId); // Remove the task
+                    Task taskToDelete = tasks[taskId];
+                    // Shift all tasks after the deleted task left
+                    for (int i = taskId; i < taskCount - 1; i++) {
+                        tasks[i] = tasks[i + 1];
+                    }
+                    tasks[taskCount - 1] = null; // Nullify the last task after shifting
+                    taskCount--; // Decrement task count
+
+                    // Save the updated tasks to the file after deletion
+                    Storage.save(tasks, taskCount);
 
                     // Output the success message
                     System.out.println("_______________________________________");
                     System.out.println("Noted. I've removed this task:");
                     System.out.println("  " + taskToDelete);
-                    System.out.println("Now you have " + tasks.size() + " tasks in the list.");
+                    System.out.println("Now you have " + taskCount + " tasks in the list.");
                     System.out.println("_______________________________________");
                 } else {
                     throw new WagException("I'm sorry, but I don't know what that means.");
