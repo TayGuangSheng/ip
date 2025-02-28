@@ -1,3 +1,5 @@
+package wag.exceptions;
+
 public class WagErrorHandler {
     public static void handleError(WagException e) {
         System.out.println("____________________________________________________________");

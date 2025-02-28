@@ -1,10 +1,15 @@
-// Deadline.java
+package wag.tasks;
+
 public class Deadline extends Task {
-    protected String by;
+    private String by;
 
     public Deadline(String description, String by) {
         super(description);
         this.by = by;
+    }
+
+    public String getBy() { // <-- Add this getter
+        return by;
     }
 
     @Override
@@ -12,4 +17,3 @@ public class Deadline extends Task {
         return "[D]" + super.toString() + " (by: " + by + ")";
     }
 }
-

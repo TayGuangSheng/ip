@@ -1,4 +1,6 @@
-T | 0 | sleep
-D | 0 | eat | monday
-D | 0 | sleep | friday
 T | 1 | eat
+D | 1 | eat with my bf dinner | 6pm
+E | 0 | eat | 10pm | 1pm
+T | 0 | sleep
+T | 0 | run
+D | 0 | run more | ahbdaf

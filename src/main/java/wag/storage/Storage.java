@@ -1,13 +1,21 @@
+package wag.storage;
+
+import wag.tasks.Deadline;
+import wag.tasks.Event;
+import wag.tasks.Task;
+import wag.tasks.Todo;
+
 import java.io.*;
+
 
 public class Storage {
     private static final String FILE_PATH = "data" + File.separator + "wag.txt";
 
     /**
-     * Loads tasks from the file. If the file or its directory does not exist,
-     * they are created and an empty tasks array is returned.
+     * Loads wag.tasks from the file. If the file or its directory does not exist,
+     * they are created and an empty wag.tasks array is returned.
      */
-    public static Task[] load() {
+    public static Task[] loadFile() {
         Task[] tasks = new Task[100];
         int taskCount = 0;
         File file = new File(FILE_PATH);
@@ -70,9 +78,9 @@ public class Storage {
     }
 
     /**
-     * Saves the current tasks to the file.
-     * @param tasks an array containing tasks.
-     * @param taskCount the number of valid tasks in the array.
+     * Saves the current wag.tasks to the file.
+     * @param tasks an array containing wag.tasks.
+     * @param taskCount the number of valid wag.tasks in the array.
      */
     public static void save(Task[] tasks, int taskCount) {
         File file = new File(FILE_PATH);
@@ -85,13 +93,13 @@ public class Storage {
                 Task task = tasks[i];
                 String line = "";
                 if (task instanceof Todo) {
-                    line = "T | " + (task.isDone ? "1" : "0") + " | " + task.description;
+                    line = "T | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription();  // <-- Use getters
                 } else if (task instanceof Deadline) {
                     Deadline d = (Deadline) task;
-                    line = "D | " + (task.isDone ? "1" : "0") + " | " + task.description + " | " + d.by;
+                    line = "D | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription() + " | " + d.getBy();  // <-- Use getters
                 } else if (task instanceof Event) {
                     Event e = (Event) task;
-                    line = "E | " + (task.isDone ? "1" : "0") + " | " + task.description + " | " + e.from + " | " + e.to;
+                    line = "E | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription() + " | " + e.getFrom() + " | " + e.getTo();  // <-- Use getters
                 }
                 bw.write(line);
                 bw.newLine();
@@ -100,4 +108,5 @@ public class Storage {
             System.out.println("Error saving file: " + e.getMessage());
         }
     }
+
 }
