@@ -2,61 +2,70 @@ package wag.tasks;
 
 import wag.exceptions.WagException;
 import wag.storage.Storage;
-import wag.tasks.Task;
 import wag.ui.Ui;
 
-public class TaskList {
-    private Task[] tasks;
-    private int taskCount;
+import java.util.ArrayList;
 
-    public TaskList(Task[] tasks, int taskCount) {
-        this.tasks = tasks;
-        this.taskCount = taskCount;
+public class TaskList {
+    private ArrayList<Task> tasks;
+    private Ui ui; // ✅ Store Ui instance
+
+    public TaskList(Ui ui) { // ✅ Pass Ui instance
+        this.tasks = new ArrayList<>();
+        this.ui = ui;
     }
 
-    public void addTask(Task task) throws WagException {
-        if (taskCount >= tasks.length) {
-            throw new WagException("wag.tasks.Task list is full!");
-        }
-        tasks[taskCount++] = task;
-        Storage.save(tasks, taskCount);
-        Ui.printTaskAdded(task, taskCount);
+    public TaskList(ArrayList<Task> tasks, Ui ui) { // ✅ Pass Ui instance
+        this.tasks = tasks;
+        this.ui = ui;
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+        ui.printTaskAdded(task, tasks.size());
+        Storage.save(tasks); // ✅ Save after adding a task
     }
 
     public void deleteTask(int taskId) throws WagException {
-        if (taskId < 0 || taskId >= taskCount) {
-            throw new WagException("Invalid task id.");
+        if (!isValidTaskIndex(taskId)) {
+            throw new WagException("Invalid task ID.");
         }
-        Task deletedTask = tasks[taskId];
-        System.arraycopy(tasks, taskId + 1, tasks, taskId, taskCount - taskId - 1);
-        tasks[--taskCount] = null;
-        Storage.save(tasks, taskCount);
-        Ui.printTaskDeleted(deletedTask, taskCount);
+        Task removedTask = tasks.remove(taskId);
+        ui.printTaskDeleted(removedTask, tasks.size());
+        Storage.save(tasks); // ✅ Save after deleting a task
     }
 
     public void markTaskAsDone(int taskId) throws WagException {
-        if (taskId < 0 || taskId >= taskCount) {
-            throw new WagException("Invalid task id.");
+        if (!isValidTaskIndex(taskId)) {
+            throw new WagException("Invalid task ID.");
         }
-        tasks[taskId].markAsDone();
-        Storage.save(tasks, taskCount);
-        Ui.printTaskAction("Nice! I've marked this task as done:", tasks[taskId]);
+        tasks.get(taskId).markAsDone();
+        ui.printTaskAction("Nice! I've marked this task as done:", tasks.get(taskId));
+        Storage.save(tasks); // ✅ Save after marking as done
     }
 
     public void unmarkTaskAsDone(int taskId) throws WagException {
-        if (taskId < 0 || taskId >= taskCount) {
-            throw new WagException("Invalid task id.");
+        if (!isValidTaskIndex(taskId)) {
+            throw new WagException("Invalid task ID.");
         }
-        tasks[taskId].unmarkAsDone();
-        Storage.save(tasks, taskCount);
-        Ui.printTaskAction("OK, I've marked this task as not done yet:", tasks[taskId]);
-    }
-
-    public void printTaskList() {
-        Ui.printTaskList(tasks, taskCount);
+        tasks.get(taskId).unmarkAsDone();
+        ui.printTaskAction("OK, I've marked this task as not done yet:", tasks.get(taskId));
+        Storage.save(tasks); // ✅ Save after unmarking
     }
 
     public int getTaskCount() {
-        return taskCount;
+        return tasks.size();
+    }
+
+    public void printTaskList() {
+        ui.printTaskList(tasks); // ✅ Use instance method
+    }
+
+    public ArrayList<Task> getTasks() {
+        return tasks;
+    }
+
+    public boolean isValidTaskIndex(int taskId) {
+        return taskId >= 0 && taskId < tasks.size();
     }
 }

@@ -17,21 +17,11 @@ public abstract class Task {
         isDone = false;
     }
 
-    public boolean isDone() { // <-- Add this getter
+    public boolean isDone() {
         return isDone;
     }
 
-    public static int getTaskCount(Task[] tasks) {
-        int count = 0;
-        for (Task task : tasks) {
-            if (task != null) {
-                count++;
-            }
-        }
-        return count;
-    }
-
-    public String getDescription() { // <-- Add this getter
+    public String getDescription() {
         return description;
     }
 

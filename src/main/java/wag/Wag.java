@@ -6,15 +6,16 @@ import wag.tasks.Task;
 import wag.tasks.TaskList;
 import wag.ui.Ui;
 
+import java.util.ArrayList;
+
 public class Wag {
     public static void main(String[] args) {
-        Ui.printWelcomeMessage();
+        Ui ui = new Ui(); // ✅ Create a Ui instance
+        ui.printWelcomeMessage(); // ✅ Call instance method
 
-        Task[] tasks = Storage.loadFile();
-        int taskCount = Task.getTaskCount(tasks);
-
-        TaskList taskList = new TaskList(tasks, taskCount);
-        CommandExecutor commandExecutor = new CommandExecutor(taskList);
+        ArrayList<Task> tasks = Storage.loadFile();
+        TaskList taskList = new TaskList(tasks, ui); // ✅ Pass Ui instance to TaskList
+        CommandExecutor commandExecutor = new CommandExecutor(taskList, ui); // ✅ Pass Ui instance to CommandExecutor
         commandExecutor.start();
     }
 }

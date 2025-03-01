@@ -10,10 +10,12 @@ import java.util.Scanner;
 
 public class CommandExecutor {
     private TaskList taskList;
+    private Ui ui;
     private Scanner scanner;
 
-    public CommandExecutor(TaskList taskList) {
+    public CommandExecutor(TaskList taskList, Ui ui) { // ✅ Pass Ui instance
         this.taskList = taskList;
+        this.ui = ui;
         this.scanner = new Scanner(System.in);
     }
 
@@ -21,18 +23,18 @@ public class CommandExecutor {
         while (true) {
             try {
                 String commandStr = scanner.nextLine();
-                Ui.printSeparator();
+                ui.printSeparator(); // ✅ Use instance method
 
                 // "bye" is still handled here.
                 if (commandStr.equalsIgnoreCase("bye")) {
-                    Ui.printGoodbyeMessage();
+                    ui.printGoodbyeMessage(); // ✅ Use instance method
                     break;
                 }
 
                 // Use wag.parser.Parser to obtain a wag.commands.Command and execute it.
                 Command command = Parser.parse(commandStr, taskList);
-                command.execute(taskList, null); // wag.ui.Ui methods are static so no instance is needed
-                Ui.printSeparator();
+                command.execute(taskList, ui); // ✅ Pass Ui instance to Command
+                ui.printSeparator(); // ✅ Use instance method
             } catch (WagException e) {
                 WagErrorHandler.handleError(e);
             } catch (Exception e) {
