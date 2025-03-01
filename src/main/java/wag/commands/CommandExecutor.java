@@ -31,10 +31,17 @@ public class CommandExecutor {
                     break;
                 }
 
-                // Use wag.parser.Parser to obtain a wag.commands.Command and execute it.
-                Command command = Parser.parse(commandStr, taskList);
-                command.execute(taskList, ui); // ✅ Pass Ui instance to Command
-                ui.printSeparator(); // ✅ Use instance method
+                try {
+                    // Use wag.parser.Parser to obtain a wag.commands.Command and execute it.
+                    Command command = Parser.parse(commandStr, taskList);
+                    command.execute(taskList, ui); // ✅ Pass Ui instance to Command
+                    ui.printSeparator(); // ✅ Use instance method
+                } catch (IllegalArgumentException e) {
+                    // Catch invalid date format errors
+                    System.out.println(e.getMessage());
+                    ui.printSeparator();
+                }
+
             } catch (WagException e) {
                 WagErrorHandler.handleError(e);
             } catch (Exception e) {
@@ -43,3 +50,4 @@ public class CommandExecutor {
         }
     }
 }
+
