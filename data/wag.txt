@@ -1,1 +1,5 @@
 T | 0 | run
+D | 1 | eat | mon
+T | 1 | run marathon
+T | 0 | running everyday
+D | 0 | run | tonight
