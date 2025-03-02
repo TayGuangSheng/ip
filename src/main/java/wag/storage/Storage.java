@@ -6,15 +6,15 @@ import wag.tasks.Task;
 import wag.tasks.Todo;
 
 import java.io.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 public class Storage {
     private static final String FILE_PATH = "data" + File.separator + "wag.txt";
+    private static final DateTimeFormatter STORAGE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
-    /**
-     * Loads tasks from the file. If the file or its directory does not exist,
-     * they are created and an empty task list is returned.
-     */
     public static ArrayList<Task> loadFile() {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(FILE_PATH);
@@ -29,7 +29,7 @@ public class Storage {
             } catch (IOException e) {
                 System.out.println("Error creating file: " + e.getMessage());
             }
-            return tasks; // Return empty ArrayList
+            return tasks; // Return empty list
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
@@ -41,12 +41,33 @@ public class Storage {
                     continue;
                 }
 
-                Task task = switch (parts[0]) {
-                case "T"  -> new Todo(parts[2]);
-                case "D"  -> (parts.length < 4) ? null : new Deadline(parts[2], parts[3]);
-                case "E"  -> (parts.length < 5) ? null : new Event(parts[2], parts[3], parts[4]);
-                default   -> null;
-                };
+                Task task = null;
+                switch (parts[0]) {
+                case "T":
+                    task = new Todo(parts[2]);
+                    break;
+                case "D":
+                    if (parts.length >= 4) {
+                        try {
+                            LocalDateTime deadlineTime = LocalDateTime.parse(parts[3], STORAGE_FORMAT);
+                            task = new Deadline(parts[2], deadlineTime);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Error parsing deadline date: " + parts[3]);
+                        }
+                    }
+                    break;
+                case "E":
+                    if (parts.length >= 5) {
+                        try {
+                            LocalDateTime fromTime = LocalDateTime.parse(parts[3], STORAGE_FORMAT);
+                            LocalDateTime toTime = LocalDateTime.parse(parts[4], STORAGE_FORMAT);
+                            task = new Event(parts[2], fromTime, toTime);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Error parsing event dates: " + parts[3] + ", " + parts[4]);
+                        }
+                    }
+                    break;
+                }
 
                 if (task == null) {
                     System.out.println("Corrupted task (skipped): " + line);
@@ -64,10 +85,6 @@ public class Storage {
         return tasks;
     }
 
-    /**
-     * Saves the current tasks to the file.
-     * @param tasks an ArrayList containing tasks.
-     */
     public static void save(ArrayList<Task> tasks) {
         File file = new File(FILE_PATH);
         File parent = file.getParentFile();
@@ -78,18 +95,22 @@ public class Storage {
 
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             for (Task task : tasks) {
-                String line = switch (task.getClass().getSimpleName()) {
-                    case "Todo"     -> "T | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription();
-                    case "Deadline" -> {
-                        Deadline d = (Deadline) task;
-                        yield "D | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription() + " | " + d.getBy();
-                    }
-                    case "Event"    -> {
-                        Event e = (Event) task;
-                        yield "E | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription() + " | " + e.getFrom() + " | " + e.getTo();
-                    }
-                    default         -> "";
-                };
+                String line = "";
+                switch (task.getClass().getSimpleName()) {
+                case "Todo":
+                    line = "T | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription();
+                    break;
+                case "Deadline":
+                    Deadline d = (Deadline) task;
+                    line = "D | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription() + " | " +
+                            d.getStorageFormat();
+                    break;
+                case "Event":
+                    Event e = (Event) task;
+                    line = "E | " + (task.isDone() ? "1" : "0") + " | " + task.getDescription() + " | " +
+                            e.getStorageFrom() + " | " + e.getStorageTo();
+                    break;
+                }
                 if (!line.isEmpty()) {
                     bw.write(line);
                     bw.newLine();
