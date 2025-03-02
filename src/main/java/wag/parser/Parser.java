@@ -19,11 +19,16 @@ public class Parser {
             case "deadline" -> parseDeadline(args);
             case "event" -> parseEvent(args);
             case "delete" -> new DeleteCommand(parseTaskNumber(args, "delete", taskList));
+            case "find" -> {
+                if (args.isEmpty()) {
+                    throw new WagException("Please provide a keyword to search.");
+                }
+                yield new FindCommand(args);
+            }
             default -> throw new WagException("I'm sorry, but I don't know what that means.");
         };
     }
 
-    /** Parses task number for commands like mark, unmark, and delete */
     private static int parseTaskNumber(String args, String commandType, TaskList taskList) throws WagException {
         if (args.isEmpty()) {
             throw new WagException("Please provide a valid task number to " + commandType + ".");
@@ -39,7 +44,6 @@ public class Parser {
         }
     }
 
-    /** Parses a Todo command */
     private static Command parseTodo(String args) throws WagException {
         if (args.isEmpty()) {
             throw new WagException("The description for a todo cannot be empty.");
@@ -47,7 +51,6 @@ public class Parser {
         return new TodoCommand(args);
     }
 
-    /** Parses a Deadline command */
     private static Command parseDeadline(String args) throws WagException {
         String[] deadlineParts = args.split(" /by ", 2);
         if (deadlineParts.length < 2 || deadlineParts[0].isEmpty() || deadlineParts[1].isEmpty()) {
@@ -56,7 +59,6 @@ public class Parser {
         return new DeadlineCommand(deadlineParts[0].trim(), deadlineParts[1].trim());
     }
 
-    /** Parses an Event command */
     private static Command parseEvent(String args) throws WagException {
         String[] eventParts = args.split(" /from | /to ", 3);
         if (eventParts.length < 3 || eventParts[0].isEmpty() || eventParts[1].isEmpty() || eventParts[2].isEmpty()) {
