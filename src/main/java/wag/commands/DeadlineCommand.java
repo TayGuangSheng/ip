@@ -4,6 +4,9 @@ import wag.exceptions.WagException;
 import wag.tasks.Deadline;
 import wag.tasks.TaskList;
 import wag.ui.Ui;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Represents a command to add a deadline task to the task list.
@@ -32,7 +35,13 @@ public class DeadlineCommand implements Command {
      */
     @Override
     public void execute(TaskList taskList, Ui ui) throws WagException {
-        taskList.addTask(new Deadline(description, by));
+        try {
+            DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+            LocalDateTime deadlineTime = LocalDateTime.parse(by, inputFormat);
+            taskList.addTask(new Deadline(description, deadlineTime)); // ✅ Now passing LocalDateTime
+        } catch (DateTimeParseException e) {
+            throw new WagException("Invalid date format! Use: dd/MM/yyyy HHmm");
+        }
     }
 }
 

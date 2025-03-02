@@ -14,23 +14,13 @@ public class Deadline extends Task {
     private static final DateTimeFormatter STORAGE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
     private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy, h:mma");
 
-    public Deadline(String description, String by) throws IllegalArgumentException {
-        super(description);
-        try {
-            this.by = LocalDateTime.parse(by, INPUT_FORMAT);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Invalid date format! Use: dd/MM/yyyy HHmm");
-        }
-    }
-
-
     /**
      * Constructs a {@code Deadline} task with the specified description and due date.
      *
      * @param description The task description.
      * @param by The deadline for the task.
      */
-    public Deadline(String description, String by) {
+    public Deadline(String description, LocalDateTime by) {
         super(description);
         this.by = by;
     }

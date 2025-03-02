@@ -53,7 +53,7 @@ public class Ui {
     /**
      * Displays a message confirming a task was added.
      *
-     * @param task The task that was added.
+     * @param task      The task that was added.
      * @param taskCount The total number of tasks in the list.
      */
     public void printTaskAdded(Task task, int taskCount) {
@@ -66,7 +66,7 @@ public class Ui {
     /**
      * Displays a message confirming a task was deleted.
      *
-     * @param task The task that was deleted.
+     * @param task      The task that was deleted.
      * @param taskCount The total number of tasks remaining in the list.
      */
     public void printTaskDeleted(Task task, int taskCount) {
@@ -97,7 +97,7 @@ public class Ui {
      * Displays a message when a task's status is updated.
      *
      * @param message The status message.
-     * @param task The task that was updated.
+     * @param task    The task that was updated.
      */
     public void printTaskAction(String message, Task task) {
         System.out.println(message);
@@ -119,6 +119,7 @@ public class Ui {
      */
     public void close() {
         scanner.close();
+    }
 
     public void printMatchingTasks(ArrayList<Task> tasks) {
         if (tasks.isEmpty()) {
