@@ -4,6 +4,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Represents an event task with a start and end time.
+ * An {@code Event} task has a description, a start time, and an end time.
+ */
 public class Event extends Task {
     private LocalDateTime from;
     private LocalDateTime to;
@@ -21,16 +25,33 @@ public class Event extends Task {
         }
     }
 
+    /**
+     * Constructs an {@code Event} task with the specified description, start time, and end time.
+     *
+     * @param description The task description.
+     * @param from The start time of the event.
+     * @param to The end time of the event.
+     */
     public Event(String description, LocalDateTime from, LocalDateTime to) {
         super(description);
         this.from = from;
         this.to = to;
     }
 
+    /**
+     * Retrieves the start time of the event.
+     *
+     * @return The start time as a {@code String}.
+     */
     public String getFrom() {
         return (from != null) ? from.format(OUTPUT_FORMAT) : "Invalid Date";
     }
 
+    /**
+     * Retrieves the end time of the event.
+     *
+     * @return The end time as a {@code String}.
+     */
     public String getTo() {
         return (to != null) ? to.format(OUTPUT_FORMAT) : "Invalid Date";
     }
@@ -43,6 +64,11 @@ public class Event extends Task {
         return (to != null) ? to.format(STORAGE_FORMAT) : "";
     }
 
+    /**
+     * Returns a formatted string representation of the event task.
+     *
+     * @return A string containing the task type, status, description, start time, and end time.
+     */
     @Override
     public String toString() {
         return "[E]" + super.toString() + " (from: " + getFrom() + " to: " + getTo() + ")";

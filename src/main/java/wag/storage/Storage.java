@@ -11,31 +11,46 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
+/**
+ * The {@code Storage} class handles loading and saving tasks to a persistent file.
+ */
 public class Storage {
     private static final String FILE_PATH = "data" + File.separator + "wag.txt";
     private static final DateTimeFormatter STORAGE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
 
+    /**
+     * Loads tasks from the file. If the file or its directory does not exist,
+     * they are created, and an empty task list is returned.
+     *
+     * @return An {@code ArrayList} of tasks loaded from the file.
+     */
     public static ArrayList<Task> loadFile() {
         ArrayList<Task> tasks = new ArrayList<>();
         File file = new File(FILE_PATH);
         File parent = file.getParentFile();
 
+        // Ensure parent directory exists
         if (parent != null && !parent.exists()) {
             parent.mkdirs();
         }
+
+        // Create file if it does not exist
         if (!file.exists()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
                 System.out.println("Error creating file: " + e.getMessage());
             }
-            return tasks; // Return empty list
+            return tasks; // Return empty task list
         }
 
+        // Read tasks from the file
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(" \\| ");
+
+                // Validate line format
                 if (parts.length < 3) {
                     System.out.println("Corrupted line (skipped): " + line);
                     continue;
@@ -74,6 +89,7 @@ public class Storage {
                     continue;
                 }
 
+                // Mark task as done if indicated
                 if (parts[1].equals("1")) {
                     task.markAsDone();
                 }
@@ -85,14 +101,21 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves the current tasks to the file.
+     *
+     * @param tasks An {@code ArrayList} containing the tasks to be saved.
+     */
     public static void save(ArrayList<Task> tasks) {
         File file = new File(FILE_PATH);
         File parent = file.getParentFile();
 
+        // Ensure parent directory exists
         if (parent != null && !parent.exists()) {
             parent.mkdirs();
         }
 
+        // Write tasks to file
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
             for (Task task : tasks) {
                 String line = "";
