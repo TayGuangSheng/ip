@@ -31,10 +31,16 @@ public class Parser {
             case "deadline" -> parseDeadline(args);
             case "event" -> parseEvent(args);
             case "delete" -> new DeleteCommand(parseTaskNumber(args, "delete", taskList));
+            case "find" -> {
+                if (args.isEmpty()) {
+                    throw new WagException("Please provide a keyword to search.");
+                }
+                yield new FindCommand(args);
+            }
             default -> throw new WagException("I'm sorry, but I don't know what that means.");
         };
     }
-
+  
     /**
      * Parses a task number from the user input.
      *

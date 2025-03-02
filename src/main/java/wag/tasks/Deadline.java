@@ -1,11 +1,28 @@
 package wag.tasks;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 /**
  * Represents a task with a deadline.
  * A {@code Deadline} task has a description and a due date.
  */
 public class Deadline extends Task {
-    private String by;
+    private LocalDateTime by;
+    private static final DateTimeFormatter INPUT_FORMAT = DateTimeFormatter.ofPattern("d/M/yyyy HHmm");
+    private static final DateTimeFormatter STORAGE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+    private static final DateTimeFormatter OUTPUT_FORMAT = DateTimeFormatter.ofPattern("MMM d yyyy, h:mma");
+
+    public Deadline(String description, String by) throws IllegalArgumentException {
+        super(description);
+        try {
+            this.by = LocalDateTime.parse(by, INPUT_FORMAT);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("Invalid date format! Use: dd/MM/yyyy HHmm");
+        }
+    }
+
 
     /**
      * Constructs a {@code Deadline} task with the specified description and due date.
@@ -24,7 +41,11 @@ public class Deadline extends Task {
      * @return The deadline as a {@code String}.
      */
     public String getBy() {
-        return by;
+        return (by != null) ? by.format(OUTPUT_FORMAT) : "Invalid Date";
+    }
+
+    public String getStorageFormat() {
+        return (by != null) ? by.format(STORAGE_FORMAT) : "";
     }
 
     /**
@@ -34,6 +55,6 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        return "[D]" + super.toString() + " (by: " + getBy() + ")";
     }
 }

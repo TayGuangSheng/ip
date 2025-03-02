@@ -1,4 +1,2 @@
-T | 0 | run
-T | 1 | eat
-D | 1 | gym | tues
-E | 0 | marathon | sun | tue
+D | 0 | return book | 2019-12-02 1800
+E | 0 | return book | 2019-12-01 1800 | 2019-12-01 2000
