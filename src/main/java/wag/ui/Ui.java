@@ -9,7 +9,7 @@ import java.util.Scanner;
  * and reading user input.
  */
 public class Ui {
-    private static final String SEPARATOR = "_______________________________________";
+    private static final String SEPARATOR = "________________________________________________________________________";
     private Scanner scanner;
 
     /**
@@ -130,5 +130,18 @@ public class Ui {
                 System.out.println((i + 1) + ". " + tasks.get(i));
             }
         }
+    }
+    public void printHelpMessage() {
+        System.out.println("Here are the available commands:");
+        System.out.println("- todo <description>: Adds a new todo task");
+        System.out.println("- deadline <description> /by <date>: Adds a task with a deadline");
+        System.out.println("- event <description> /from <data> /to <date>: Adds an event task");
+        System.out.println("- list: Displays all tasks");
+        System.out.println("- mark <task number>: Marks a task as done");
+        System.out.println("- unmark <task number>: Marks a task as not done");
+        System.out.println("- delete <task number>: Deletes a task");
+        System.out.println("- find <keyword>: Finds tasks containing the keyword");
+        System.out.println("- help: Displays this help message");
+        System.out.println("- bye: Exits the application");
     }
 }

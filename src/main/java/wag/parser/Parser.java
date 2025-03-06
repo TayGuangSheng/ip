@@ -37,7 +37,8 @@ public class Parser {
                 }
                 yield new FindCommand(args);
             }
-            default -> throw new WagException("I'm sorry, but I don't know what that means.");
+            case "help" -> new HelpCommand();
+            default -> throw new WagException("I'm not sure what that means. Type 'help' for a list of commands.");
         };
     }
   
@@ -57,7 +58,7 @@ public class Parser {
         try {
             int taskId = Integer.parseInt(args) - 1;
             if (!taskList.isValidTaskIndex(taskId)) {
-                throw new WagException("Task number is out of range.");
+                throw new WagException("Task number is out of range. Input 'list' to see the tasks available.");
             }
             return taskId;
         } catch (NumberFormatException e) {

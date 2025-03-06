@@ -11,8 +11,8 @@ public class WagErrorHandler {
      * @param e The WagException containing the error message.
      */
     public static void handleError(WagException e) {
-        System.out.println("____________________________________________________________");
-        System.out.println(" OOPS!!! " + e.getMessage());
-        System.out.println("____________________________________________________________");
+        System.out.println("________________________________________________________________________");
+        System.out.println(" OOPS! " + e.getMessage());
+        System.out.println("________________________________________________________________________");
     }
 }
