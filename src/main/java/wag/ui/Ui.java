@@ -32,6 +32,7 @@ public class Ui {
         printSeparator();
         System.out.println("Hello! I'm Wag");
         System.out.println("What can I do for you?");
+        System.out.println("Input 'help' if you wants to know what I can do!!");
         printSeparator();
     }
 
@@ -60,7 +61,6 @@ public class Ui {
         System.out.println("Got it. I've added this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + taskCount + " tasks in the list.");
-        printSeparator();
     }
 
     /**
@@ -73,7 +73,6 @@ public class Ui {
         System.out.println("Noted. I've removed this task:");
         System.out.println("  " + task);
         System.out.println("Now you have " + taskCount + " tasks left in the list.");
-        printSeparator();
     }
 
     /**
@@ -90,7 +89,6 @@ public class Ui {
                 System.out.println((i + 1) + ". " + tasks.get(i));
             }
         }
-        printSeparator();
     }
 
     /**
@@ -102,7 +100,6 @@ public class Ui {
     public void printTaskAction(String message, Task task) {
         System.out.println(message);
         System.out.println("  " + task);
-        printSeparator();
     }
 
     /**

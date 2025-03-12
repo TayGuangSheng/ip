@@ -11,6 +11,7 @@
     - [Unmarking Tasks](#unmarking-tasks)
     - [Deleting Tasks](#deleting-tasks)
     - [Finding Tasks](#finding-tasks)
+    - [Help](#help)
     - [Exiting the Application](#exiting-the-application)
 - [Examples](#examples)
 - [Troubleshooting](#troubleshooting)
@@ -79,6 +80,8 @@ To unmark a task as not done:
 unmark 2
 ```
 
+*This unmarks task #2 as uncompleted.*
+
 ### Deleting Tasks
 
 To remove a task:
@@ -97,6 +100,14 @@ To search for tasks containing a keyword:
 find report
 ```
 
+### Help
+
+To list all the functions of Wag:
+
+```sh
+help
+```
+
 ### Exiting the Application
 
 To exit Wag Task Manager, type:
@@ -108,89 +119,95 @@ bye
 ## Examples
 
 ```
-_______________________________________
+________________________________________________________________________
 Hello! I'm Wag
 What can I do for you?
-_______________________________________
+________________________________________________________________________
 > todo Read a book
-_______________________________________
+________________________________________________________________________
 Got it. I've added this task:
   [T][ ] Read a book
 Now you have 1 tasks in the list.
-_______________________________________
-_______________________________________
+________________________________________________________________________
 > deadline Submit report /by 02/03/2025 0600
-_______________________________________
+________________________________________________________________________
 Got it. I've added this task:
   [D][ ] Submit report (by: Mar 2 2025, 6:00AM)
 Now you have 2 tasks in the list.
-_______________________________________
-_______________________________________
+________________________________________________________________________
 > event Team meeting /from 02/03/2025 0600 /to 02/03/2025 1800
-_______________________________________
+________________________________________________________________________
 Got it. I've added this task:
   [E][ ] Team meeting (from: Mar 2 2025, 6:00AM to: Mar 2 2025, 6:00PM)
 Now you have 3 tasks in the list.
-_______________________________________
-_______________________________________
+________________________________________________________________________
 > list
-_______________________________________
+________________________________________________________________________
 Here are the tasks in your list:
 1. [T][ ] Read a book
 2. [D][ ] Submit report (by: Mar 2 2025, 6:00AM)
 3. [E][ ] Team meeting (from: Mar 2 2025, 6:00AM to: Mar 2 2025, 6:00PM)
-_______________________________________
-_______________________________________
+________________________________________________________________________
 > mark 2
-_______________________________________
+________________________________________________________________________
 Nice! I've marked this task as done:
   [D][X] Submit report (by: Mar 2 2025, 6:00AM)
-_______________________________________
-_______________________________________
+________________________________________________________________________
 > unmark 2
-_______________________________________
+________________________________________________________________________
 OK, I've marked this task as not done yet:
   [D][ ] Submit report (by: Mar 2 2025, 6:00AM)
-_______________________________________
-_______________________________________
+________________________________________________________________________
 > delete 3
-_______________________________________
+________________________________________________________________________
 Noted. I've removed this task:
   [E][ ] Team meeting (from: Mar 2 2025, 6:00AM to: Mar 2 2025, 6:00PM)
 Now you have 2 tasks left in the list.
-_______________________________________
-_______________________________________
+________________________________________________________________________
 > find report
-_______________________________________
+________________________________________________________________________
 Here are the matching tasks in your list:
 1. [D][ ] Submit report (by: Mar 2 2025, 6:00AM)
-_______________________________________
+________________________________________________________________________
 > bye
-_______________________________________
+________________________________________________________________________
+Here are the available commands:
+- todo <description>: Adds a new todo task
+- deadline <description> /by <date>: Adds a task with a deadline
+- event <description> /from <data> /to <date>: Adds an event task
+- list: Displays all tasks
+- mark <task number>: Marks a task as done
+- unmark <task number>: Marks a task as not done
+- delete <task number>: Deletes a task
+- find <keyword>: Finds tasks containing the keyword
+- help: Displays this help message
+- bye: Exits the application
+________________________________________________________________________
 Bye. Hope to see you again soon!
-_______________________________________
+________________________________________________________________________
 ```
 
 ## Troubleshooting
 
 - **Invalid Command**: Ensure commands are typed correctly.
-- **Task Not Found**: Check if the task number exists in the list.
-- **Date Format Issues**: Use `DD-MM-YYYY HH:mm` for dates.
+- **Task Not Found**: Check if the task number exists in the list. Input 'list'.
+- **Date Format Issues**: Use `DD/MM/YYYY HHmm` for dates (e.g. 25/09/2025 0600)
 - **Application Crashes**: Try restarting the app and checking `tasks.txt` for issues.
 
 ## Command Summary
 
-| Action                | Format                                     | Example                                      |
-|-----------------------|-------------------------------------------|----------------------------------------------|
-| Add a Todo Task      | `todo <description>`                      | `todo Read a book`                          |
-| Add a Deadline Task  | `deadline <description> /by <date time>`  | `deadline Submit report /by 02/03/2025 0600` |
-| Add an Event Task    | `event <description> /from <start> /to <end>` | `event Team meeting /from 02/03/2025 0600 /to 02/03/2025 1800` |
-| List Tasks           | `list`                                     | `list`                                      |
-| Mark Task as Done    | `mark <task number>`                      | `mark 2`                                    |
-| Unmark Task as Not Done | `unmark <task number>`                  | `unmark 2`                                  |
-| Delete Task          | `delete <task number>`                    | `delete 3`                                  |
-| Find Task            | `find <keyword>`                          | `find report`                               |
-| Exit Application     | `bye`                                      | `bye`                                       |
+| Action                  | Format                                        | Example                                                        |
+|-------------------------|-----------------------------------------------|----------------------------------------------------------------|
+| Add a Todo Task         | `todo <description>`                          | `todo Read a book`                                             |
+| Add a Deadline Task     | `deadline <description> /by <date time>`      | `deadline Submit report /by 02/03/2025 0600`                   |
+| Add an Event Task       | `event <description> /from <start> /to <end>` | `event Team meeting /from 02/03/2025 0600 /to 02/03/2025 1800` |
+| List Tasks              | `list`                                        | `list`                                                         |
+| Mark Task as Done       | `mark <task number>`                          | `mark 2`                                                       |
+| Unmark Task as Not Done | `unmark <task number>`                        | `unmark 2`                                                     |
+| Delete Task             | `delete <task number>`                        | `delete 3`                                                     |
+| Find Task               | `find <keyword>`                              | `find report`                                                  |
+| Help                    | `help`                                        | `help`                                                         |
+| Exit Application        | `bye`                                         | `bye`                                                          |
 
 
 ---
