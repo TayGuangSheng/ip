@@ -23,15 +23,32 @@ Wag Task Manager is a simple command-line task management application. It helps 
 
 ## Getting Started
 
-### Installation
+### Prerequisites
+- Ensure you have **Java 17** or above installed on your computer.
+- **Mac users:** Ensure you have the precise JDK version prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
-1. Ensure you have **Java 11 or later** installed on your system.
-2. Download the `wag.jar` file.
-3. Open a terminal or command prompt and navigate to the directory containing `wag.jar`.
-4. Run the application using:
-   ```sh
-   java -jar wag.jar
-   ```
+### Installation
+1. Download the latest `.jar` file from [here](https://github.com/TayGuangSheng/ip/releases/tag/A-Release).
+2. Copy the file to the folder you want to use as the home folder for your **AddressBook**.
+
+### Running the Application
+1. Open a command terminal.
+2. Navigate to the folder containing the `.jar` file using:
+    ```sh
+    cd path/to/your/folder
+    ```
+3. Run the application with:
+    ```sh
+    java -jar ip.jar
+    ```
+4. A GUI similar to the one below should appear in a few seconds.
+
+![UI Screenshot](img.png)
+
+### Using the Application
+- Type commands in the command box and press **Enter** to execute them.
+- Example: typing `help` and pressing **Enter** will open the help window.
+- Refer to the sections below for details on each command.
 
 ## Commands
 
@@ -45,11 +62,11 @@ You can add three types of tasks:
   ```sh
   todo Read a book
   ```
-- **Deadline**: A task with a due date.
+- **Deadline**: A task with a due date. Date Format is DD/MM/YYYY HHmm
   ```sh
   deadline Submit report /by 02/03/2025 0600
   ```
-- **Event**: A task that occurs from a specific time to a specific time.
+- **Event**: A task that occurs from a specific time to a specific time. Date Format is DD/MM/YYYY HHmm
   ```sh
   event Team meeting /from 02/03/2025 0600 /to 02/03/2025 1800
   ```
@@ -189,7 +206,7 @@ ________________________________________________________________________
 
 ## Troubleshooting
 
-- **Invalid Command**: Ensure commands are typed correctly.
+- **Invalid Command**: Ensure commands are typed correctly. 
 - **Task Not Found**: Check if the task number exists in the list. Input 'list'.
 - **Date Format Issues**: Use `DD/MM/YYYY HHmm` for dates (e.g. 25/09/2025 0600)
 - **Application Crashes**: Try restarting the app and checking `tasks.txt` for issues.
@@ -212,5 +229,5 @@ ________________________________________________________________________
 
 ---
 
-Enjoy using Wag Task Manager! 🚀
+Enjoy using Wag Task Manager! 
 
